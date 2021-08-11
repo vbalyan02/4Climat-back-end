@@ -6,4 +6,5 @@ const config = {
     mongodb             : "4climat",
     users_collection    : "auth",
 }
+
 module.exports = config;

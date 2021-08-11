@@ -1,5 +1,4 @@
-
-let mongoClient = require("mongodb").mongoClient;
+let mongoClient = require("mongodb").MongoClient;
 let db          = require("../../side_modules/db");
 let config      = require("../ua_config");
 
@@ -18,10 +17,22 @@ const storage = {
     
     update_set      : async(query, u_params) => {
         let _db = await storage.loadDB();
-        let res = await db.updateOne(_db, config.sets_collection, query, u_params);
+        let res = await db.updateOne(_db, config.users_collection, query, u_params);
         return res;
     },
     
+    get_sets_count  : async() => {
+        let _db = await storage.loadDB();
+        let res = await db.count(_db, config.users_collection, {});
+        return res;
+    },
+
+    insert_set      : async(obj) => {
+        let _db = await storage.loadDB();
+        let res = await db.insert(_db, config.users_collection, obj);
+        return res;
+    },
+
     db_client               : null,
     loadDB                  : async() => {
         if(storage.db_client){
