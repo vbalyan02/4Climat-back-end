@@ -6,10 +6,10 @@ const token_sys    =   require("./ua_id");
 
 router.post('/sign_up'   ,   async function(req, res, next){
     let params = {
-        id  : req.body._student_id
+        student_id  : req.body.student_id
     }
     let result = await POST_CreateSession(params);
-    if(!result.created){
+    if(!result.dataValid){
         res.send({error : "500 : Internal Server Error"});
     } else {
         res.send(result);
@@ -18,7 +18,8 @@ router.post('/sign_up'   ,   async function(req, res, next){
 
 router.post('/sign_in', async function(req, res, next){
     let params = {
-        id  : req.body._student_id
+        student_id  : req.body.student_id,
+        token       : req.body.token
     }
     let result = await POST_SignIn(params);
     if(!result.dataValid){
@@ -52,8 +53,8 @@ const POST_CreateSession    = async (params) => {
         data        : false,
         _status     : ""
     }
-    // result.dataValid        = await valid.validate_token_upd(params);
-    // if(!result.dataValid)   {result._status = "400 : Bad Request";      return result};
+    result.dataValid        = await valid.validate_sign_up_req(params);
+    if(!result.dataValid)   {result._status = "400 : Bad Request";      return result};
     result.data             = await token_sys.generate_token(params);
     return result;
 }
