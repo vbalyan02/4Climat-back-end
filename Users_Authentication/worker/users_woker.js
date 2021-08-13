@@ -45,7 +45,7 @@ const worker = {
     },
 
     get_sessions_count      : async() => {
-        let count       =   await sets_storage.get_sets_count();
+        let count       =   await ua_storage.get_sets_count();
         return count;
     }
 }
