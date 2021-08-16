@@ -2,10 +2,9 @@ const express   =   require('express');
 const router    =   express.Router();
 const valid     =   require("./ua_validators");
 const users     =   require("./worker/users_woker");
-const token_sys    =   require("./ua_id");
+const token_sys =   require("./ua_id");
 
 router.post('/sign_up'   ,   async function(req, res, next){
-    // if(!req.auth_data._ok) { res.send({error : "401 : Unauthorized"}); return; }
     let params = {
         student_id  : req.body.student_id
     }
@@ -18,7 +17,6 @@ router.post('/sign_up'   ,   async function(req, res, next){
 })
 
 router.post('/sign_in', async function(req, res, next){
-    // if(!req.auth_data._ok) { res.send({error : "401 : Unauthorized"}); return; }
     let params = {
         student_id  : req.body.student_id,
         token       : req.body.token

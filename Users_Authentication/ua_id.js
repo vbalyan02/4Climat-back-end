@@ -13,14 +13,14 @@ const token_sys = {
         }
         else{
             let id              = req.body.student_id;
-            let dat             = await token_sys.check_id(id);
+            let dat             = await token_sys.check_token(id);
             req.auth_data       = dat;
             req.auth_data._ok   = !dat.timeout && !dat.unknown;
             next();
         }
     },
 
-    check_id        : async(id) => {
+    check_token        : async(id) => {
         let id_responce = {
             timeout : false,
             unknown : true
@@ -35,6 +35,8 @@ const token_sys = {
         if(dt > session.end_time){
             id_responce.timeout = true;
             await user_auth.delete_one_of_session(query);
+        } else{
+            token_sys.update_end_time(query);
         }
         return id_responce;
     },
@@ -49,11 +51,16 @@ const token_sys = {
         return updated_params;
     },
     
-    generate_token     : async(params) => {
-        let tokenModel = {
-            student_id     : params.student_id,
-            end_time       : {},
-            token          : ""
+    generate_token  : async(params) => {
+        let tokenModel  = {
+            student_id  : params.student_id,
+            end_time    : {},
+            token       : ""
+        }
+        let session     = {
+            student_id  : params.student_id,
+            token       : ""
+            
         }
         let student = await user_auth.get_one_of_session(params);
         if(student !== null){
@@ -62,8 +69,8 @@ const token_sys = {
             tokenModel.end_time = res.end_time;
             return tokenModel;
         }
-        let count               =   await user_auth.get_sessions_count();
 
+        let count               = await user_auth.get_sessions_count();
         for(let i = 0; i <= count; i++){
             tokenModel.end_time = (new Date()).getTime() + (1 * 60 * 60 * 1000); // day * minute * second * milisecond
             tokenModel.token    = crc32(tokenModel.end_time.toString());
@@ -71,9 +78,9 @@ const token_sys = {
             if(!token)
                 break;
         }
-
         await user_auth.create_session(tokenModel);
-        return tokenModel;
+        session.token    = tokenModel.token;
+        return session;
     }
 }
 
