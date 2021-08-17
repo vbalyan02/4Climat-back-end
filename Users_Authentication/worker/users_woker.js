@@ -3,9 +3,9 @@ const ua_storage    = require("../storage/ua_storage");
 const worker = {
     create_session          : async(params) => {
         let user_session = {
-            student_id  : params.student_id,
-            end_time    : params.end_time,
-            token       : params.token
+            uid         : params.uid,
+            perf        : params.perf,
+            session     : params.session
         }        
         await ua_storage.insert_set(user_session);
         return user_session;
@@ -13,7 +13,7 @@ const worker = {
 
     get_one_of_session      : async(params) => {
         let query = {
-            student_id : params.student_id
+            uid : params.uid
         }
         let dat = await ua_storage.get_one_of_session(query);
         return dat;
@@ -21,19 +21,32 @@ const worker = {
 
     search_token            : async(params) => {
         let query = {
-            student_id : params.token
+            session     : {}
         }
+        query.session.token   = params.token;
         let dat = await ua_storage.get_one_of_session(query);
         return dat;
     },
 
     update_all_set          : async(params) => {
         let update_dat  = {
-            end_time      :   params.end_time   
+            perf        : params.perf,
+            session     : params.session    
         }
-        let query       =   {student_id   :   params.student_id};
+        let query       =   {uid   :   params.uid};
         let dat         =   await ua_storage.update_set(query, update_dat);
-        return dat;     
+        return dat;    
+    },
+
+    update_user_session      : async(params) => {
+        let update_dat  = {
+            session     :   {} 
+        }
+        update_dat.session.token    = params.token;
+        update_dat.session.end_time = params.end_time;
+        let query       =   {uid   :   params.uid};
+        let dat         =   await ua_storage.update_set(query, update_dat);
+        return dat;    
     },
 
     delete_one_of_session   : async(params) => {

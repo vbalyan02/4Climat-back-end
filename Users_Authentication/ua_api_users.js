@@ -4,29 +4,31 @@ const valid     =   require("./ua_validators");
 const users     =   require("./worker/users_woker");
 const token_sys =   require("./ua_id");
 
-router.post('/sign_up'   ,   async function(req, res, next){
+router.put('/users'   ,   async function(req, res, next){
     let params = {
-        student_id  : req.body.student_id
+        uid     : req.body.uid
     }
-    let result = await POST_CreateSession(params);
+    let result = await PUT_SignUp(params);
     if(!result.dataValid){
-        res.send({error : "500 : Internal Server Error"});
+        res.send({error : "Invalid Post Data"});
     } else {
         res.send(result);
     }
+    next()
 })
 
-router.post('/sign_in', async function(req, res, next){
+router.post('/users', async function(req, res, next){
     let params = {
-        student_id  : req.body.student_id,
-        token       : req.body.token
+        uid     : req.body.uid,
+        token   : req.body.token
     }
     let result = await POST_SignIn(params);
     if(!result.dataValid){
-        res.send({error : "500 : Internal Server Error"});
+        res.send({error : "Invalid Post Data"});
     } else {
         res.send(result);
     }
+    next()
 })
 
 const POST_SignIn           = async (params) => {
@@ -37,21 +39,21 @@ const POST_SignIn           = async (params) => {
     }
     result.dataValid    = await valid.validate_sign_in_req(params);
     if(!result.dataValid){
-        result.status   = "400: Bad Request";
+        result.status   = "400 : Bad Request";
         return result;
     }
     result.data         = await users.get_one_of_session(params);
-    result.status       = result.data       === null ? "404 : Not Found" :
-                          result.data.token !== params.token ? "403 : Forbidden" : "200 : Ok";
+    result.status       = result.data               === null        ?  "404 : Not Found" :
+                          result.data.session.token !== params.token?  "403 : Forbidden" : "200 : Ok";
     if(result.status === "200 : Ok"){
-        result.data     = await token_sys.update_end_time(params);
+        result.data     = await token_sys.check_user(result.data);
     } else{
         result.data = "wrong token";
     }
     return result;
 }
 
-const POST_CreateSession    = async (params) => {
+const PUT_SignUp    = async (params) => {
     let result = {
         dataValid   : false,
         data        : false,
@@ -59,7 +61,7 @@ const POST_CreateSession    = async (params) => {
     }
     result.dataValid        = await valid.validate_sign_up_req(params);
     if(!result.dataValid)   {result._status = "400 : Bad Request";      return result};
-    result.data             = await token_sys.generate_token(params);
+    result.data             = await token_sys.create_new_user(params);
     return result;
 }
 
