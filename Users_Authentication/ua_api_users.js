@@ -20,6 +20,7 @@ router.put('/users'   ,   async function(req, res, next){
 router.post('/users', async function(req, res, next){
     let params = {
         uid     : req.body.uid,
+        perf    : req.body.perf,
         token   : req.body.token
     }
     let result = await POST_SignIn(params);
@@ -37,7 +38,7 @@ const POST_SignIn           = async (params) => {
         data        : false,
         status      : ""
     }
-    result.dataValid    = await valid.validate_sign_in_req(params);
+    result.dataValid    = valid.validate_sign_in_req(params);
     if(!result.dataValid){
         result.status   = "400 : Bad Request";
         return result;
@@ -47,8 +48,8 @@ const POST_SignIn           = async (params) => {
                           result.data.session.token !== params.token?  "403 : Forbidden" : "200 : Ok";
     if(result.status === "200 : Ok"){
         result.data     = await token_sys.check_user(result.data);
-    } else{
-        result.data = "wrong token";
+    } else {
+        result.data = null;
     }
     return result;
 }
@@ -59,9 +60,10 @@ const PUT_SignUp    = async (params) => {
         data        : false,
         _status     : ""
     }
-    result.dataValid        = await valid.validate_sign_up_req(params);
+    result.dataValid        = valid.validate_sign_up_req(params);
     if(!result.dataValid)   {result._status = "400 : Bad Request";      return result};
     result.data             = await token_sys.create_new_user(params);
+    result._status          = "200 : Ok";
     return result;
 }
 

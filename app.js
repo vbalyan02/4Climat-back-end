@@ -18,7 +18,6 @@ app.use(function(req, res, next) {
 });
 
 app.use(fileUpload());
-// app.use('/'                     , auth.handle_request);
 app.use('/4climat'              , users_auth);
 
 
