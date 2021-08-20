@@ -28,9 +28,9 @@ const storage = {
         return res;
     },
 
-    get_sets_list   : async() => {
+    get_sets_list   : async(query) => {
         let _db = await storage.loadDB();
-        let res = await db.list(_db, config.sets_collection, {});
+        let res = await db.list(_db, config.sets_collection, query);
         return res;
     },
 

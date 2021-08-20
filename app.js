@@ -3,7 +3,7 @@ const app                   = express();
 let   server                = require("http").Server(app);
 const fileUpload            = require('express-fileupload');
 const users_auth            = require("./Users_Authentication/ua_api_users");
-const users_post            = require("./Users_Posts/up_api");
+const users_post            = require("./Users_Post/up_api");
 
 const port = process.env.PORT || 4000;
 

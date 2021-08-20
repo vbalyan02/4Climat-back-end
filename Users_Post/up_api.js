@@ -6,6 +6,7 @@ const post      =   require("./workers/posts_worker.js");
 router.post('/create', async function(req, res, next){
     let params = {
         _uid     : req.body.uid,
+        _pid     : req.body.pid,
         _post    : req.body.post,
         _status  : req.body.status
     }
@@ -17,11 +18,11 @@ router.post('/create', async function(req, res, next){
     }
 });
 
-router.get('/getsetsone', async function (req, res, next){
-    let params  = {
-        _uid    : req.query._uid
+router.post('/list', async function (req, res, next){
+    let params = {
+        uid    : req.body.uid
     }
-    let result  = await GET_SetsOne(params);
+    let result = await GET_List(params);
     if(!result.dataValid){
         res.send({error : "Invalid post data"})
     }  else {
@@ -29,11 +30,10 @@ router.get('/getsetsone', async function (req, res, next){
     }
 });
 
-router.post('/list', async function (req, res, next){
-    let result = await GET_List();
-    res.send(result);
-})
 
+router.post('/update_status', async function (req, res, next){
+    let 
+})
 
 //----------------------------------------------------------Handlers--------------------------------------------------------\\
 
@@ -60,25 +60,14 @@ const POST_Create           = async (params) => {
     return result;
 };
 
-const GET_SetsOne               = async (params) => {
+const GET_List   = async (params) => {
     let result = {
-        dataValid   : false,
         data        : "",
-        _status     : ""
-    }
-    result.dataValid    = await valid.validate_get_one_set(params);
-    if(!result.dataValid)   {result._status = "400 : Bad Request";      return result};
-    result.data = await post.get_one_set(params);
-    result._status = result.data === null ? "404 : Not Found" : "200 : Ok";
-    return result;
-};
-
-const GET_List   = async () => {
-    let result = {
-        data    : "",
-        _status : ""    
+        dataValid   : "",
+        _status     : ""    
     };
-    result.data = await post.get_sets_list();
+    result.dataValid    = valid.validate_list_req(params);
+    result.data = await post.get_sets_list(params);
     if(!result.data)        {result._status = "404 : Not found";        return result; }
     result._status = "200 : Ok";
     return result;

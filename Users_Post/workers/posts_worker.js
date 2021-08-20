@@ -6,6 +6,7 @@ const worker = {
     create_post         : async(params) => {
         let setElement = {
             uid         :   params._uid,
+            pid         :   params._pid, 
             post        :   params._post,
             status      :   params._status
         }
@@ -23,8 +24,9 @@ const worker = {
         return dat;     
     },
 
-    get_sets_list   : async() => {
-        let data    = await post_storage.get_sets_list();
+    get_sets_list   : async(params) => {
+        let query   = {uid : params.uid, status : "published"};
+        let data    = await post_storage.get_sets_list(query);
         return data;
     }, 
 
