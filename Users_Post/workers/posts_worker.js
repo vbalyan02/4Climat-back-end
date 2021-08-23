@@ -6,36 +6,51 @@ const worker = {
     create_post         : async(params) => {
         let setElement = {
             uid         :   params._uid,
-            pid         :   params._pid, 
+            pid         :   "", 
             post        :   params._post,
             status      :   params._status
         }
+        let num = Math.ceil((new Date()).getTime() + (Math.random() * (99 - 9) + 9));
+        setElement.pid  = num.toString(16);
         await post_storage.create_post(setElement);
         return setElement;
     },
 
-    update_all_set      : async(params) => {
+    update_post_status  : async(params) => {
         let update_dat  = {
-            name        :   params._name,
-            elements    :   params._elements   
+            status  : params._status 
         }
-        let query       =   {uid   :   params._uid};
+        let query       =   {pid    : params._pid};
         let dat         =   await post_storage.update_set(query, update_dat);
         return dat;     
     },
 
-    get_sets_list   : async(params) => {
-        let query   = {uid : params.uid, status : "published"};
+    get_sets_list       : async(params) => {
+        let query   = {uid : params._uid, status : "published"};
         let data    = await post_storage.get_sets_list(query);
         return data;
     }, 
 
-    get_one_set     : async(params) => {
+    get_one_post         : async(params) => {
         let query   = {
-            uid     :   params._uid
+            pid     :   params._pid
         }
         let data    =   await post_storage.get_one_set(query);
         return data;
+    },
+
+    get_one_userpost    : async(params) => {
+        let query   = {
+            uid     : params._uid,
+            pid     : params._pid
+        }
+        let data    = await post_storage.get_one_set(query);
+        return data;
+    },
+
+    remove_post         : async(params) => {
+        let res = await post_storage.remove_one_of_sets(params);
+        return res;
     },
 
     generate_id     : () => {

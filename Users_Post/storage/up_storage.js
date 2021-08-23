@@ -10,6 +10,12 @@ const storage = {
         return res;
     },
 
+    remove_one_of_sets  : async(object) => {
+        let _db = await storage.loadDB();
+        let res = await db.remove(_db, config.sets_collection, object);
+        return res;
+    },
+
     create_post     : async(obj) => {
         let _db = await storage.loadDB();
         let res = await db.insert(_db, config.sets_collection, obj);
