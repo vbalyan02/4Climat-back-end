@@ -1,30 +1,42 @@
 const fs = require('fs');
 
 const storage = {
-    create_dir : (name) => {
-        fs.access(__dirname + `/images/${name}`, function(err){
+    create_dir  : async(params) => {
+        fs.access(__dirname + `/../images/${params.dir_name}`, async function(err){
             if(err){
-                fs.mkdir(__dirname + `/images/${name}`, function(err){
-                    if(err){
-                        return false;
-                    } else {
-                        return true;
-                    }
-                });
+                 fs.mkdirSync(__dirname + `/../images/${params.dir_name}`);
+                 fs.mkdirSync(__dirname + `/../images/${params.dir_name}/photo`);
+                 fs.mkdirSync(__dirname + `/../images/${params.dir_name}/temp`);
+                return true;
             }else{
-                console.log("file is found");
+                return true;
             };
         });
     },
 
-    delete_dir : (name) => {
-        fs.access(__dirname + `/images/${name}`, function(err){
+    delete_dir  : async(params) => {
+        fs.access(__dirname + `/../images/${params.dir_name}`, function(err){
             if(!err){
-                fs.rmdirSync(__dirname + `/images/${name}`, { recursive: true });
+                fs.rmdirSync(__dirname + `/../images/${params.dir_name}`, { recursive: true } );
+                console.log("Directory is removed");
             }else{
+                console.log(err);
                 return false;
             };
         });
+    },
+
+    save_img    : async(params, dir) => {
+        let images = params._images;
+        for(let i = 0; i < images.length; i++){
+            await images[i].mv(__dirname + `/../images/${params._pid}/${dir}/${images[i].name}`, function(err){
+                if(err){
+                    console.log(err);
+                } else{
+                    console.log(__dirname + `/../images/${params._pid}/${dir}/${images[i].name}`);
+                }
+            });
+        }
     }
 }
 
