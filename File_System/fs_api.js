@@ -33,7 +33,7 @@ const POST_Upload          = async (params) => {
     
     result.dataValid    = valid.validate_upload_req(params);
     if(!result.dataValid)   {result._status = "400 : Bad Request";      return result};
-    result.data         = images.image_upload(params);
+    result.data         = await images.image_upload(params);
     return result;
 }   
 
