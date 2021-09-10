@@ -8,9 +8,9 @@ const users_images          = require("./File_System/fs_api")
 
 const port = process.env.PORT || 4000;
 
-app.use(express.json({limit : '50mb'}));
-app.use(express.urlencoded({limit: '50mb', extended: true, parameterLimit: 1000000}));
-app.use(express.static(__dirname));
+app.use(express.json({limit : '1500mb'}));
+app.use(express.urlencoded({limit: '1500mb', extended: true, parameterLimit: 1000000}));
+app.use(express.static(__dirname + '/File_System/images'));
 
 app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', "*");

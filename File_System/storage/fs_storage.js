@@ -2,7 +2,7 @@ const fs        = require('fs');
 const config    = require('../fs_config');
 
 const storage = {
-    create_dir  : async(params) => {
+    create_dir      : async(params) => {
         try {
             return await fs.promises.access(config.path + params.dir_name);
         } catch (err) {
@@ -13,7 +13,7 @@ const storage = {
         }
     },
 
-    delete_dir  : async(params) => {
+    delete_dir      : async(params) => {
         fs.access(config.path + params.dir_name, function(err){
             if(!err){
                 fs.rmdirSync(config.path + params.dir_name, { recursive: true } );
@@ -25,7 +25,7 @@ const storage = {
         });
     },
 
-    save_img    : async(params, dir) => {
+    save_img        : async(params, dir) => {
         let images = params._images;
         if(images.length === undefined){
             await images.mv(config.path + `${params._pid}/${dir}/${images.name}`);
@@ -39,7 +39,15 @@ const storage = {
                 }
             });
         }
+    },
+
+    delete_images   : async(params) => {
+        for(let i = 0; i < params.img_name.length; i++){
+            fs.unlinkSync(config.path + `${params.dir_name}/photo/${params.img_name[i]}`);
+            fs.unlinkSync(config.path + `${params.dir_name}/temp/${params.img_name[i]}`);
+        }
     }
+
 }
 
 module.exports = storage;
