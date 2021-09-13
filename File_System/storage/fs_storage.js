@@ -46,6 +46,18 @@ const storage = {
             fs.unlinkSync(config.path + `${params.dir_name}/photo/${params.img_name[i]}`);
             fs.unlinkSync(config.path + `${params.dir_name}/temp/${params.img_name[i]}`);
         }
+    },
+
+    get_images      : async(params) => {
+        let res = {
+            standart_img    : [],
+            small_img       : []
+        }
+        for(let i = 0; i < params.img_name.length; i++){
+            res.standart_img.push(fs.readFileSync(config.path + `${params.dir_name}/photo/${params.img_name[i]}`).toString('base64'));
+            res.small_img.push(fs.readFileSync(config.path + `${params.dir_name}/temp/${params.img_name[i]}`).toString('base64'));
+        }
+        return res;
     }
 
 }

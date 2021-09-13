@@ -2,7 +2,6 @@ const img_storage   = require("../storage/fs_storage");
 const base64        = require("../../side_modules/base64");  
 const fs            = require('fs');
 const config        = require('../fs_config');
-const sharp         = require('sharp');
 
 const worker = {
     upload_images   : async(params) => {
@@ -19,19 +18,13 @@ const worker = {
         if(image_count > config.max_count){
             return null;
         }
-        await worker.correct_image(params);
+        await worker.create_standart(params);
         await worker.create_temp(params);
         
         return image;
     },
 
-    correct_image   : async(params) => {
-        // sharp(params._images[0])
-        // .resize(100, 100, {
-        //     fit: sharp.fit.inside,
-        //     withoutEnlargement: true
-        //   })
-        // .then(img_storage.save_img(params, "photo"))
+    create_standart   : async(params) => {
         let res = await img_storage.save_img(params, "photo");
         return res;
     },
@@ -67,13 +60,15 @@ const worker = {
             length  : 0
         };
         let files   = fs.readdirSync(config.path + `${params.dir_name}/photo`);
-        let flag    = true;
+        let flag;
         arr.length  = files.length;
         for(let i = 0; i < params.img_name.length; i++){
+            flag = true;
             for(let j = 0; j < files.length; j++){
                 if(params.img_name[i] === files[j]){
                     arr.found.push(params.img_name[i]);
                     flag = true;
+                    break;
                 } else{
                     flag = false;
                 }
@@ -83,9 +78,23 @@ const worker = {
 
         }
         return arr;
+    },
+
+    get_images  : async(params) => {
+        let image_pack = {
+            dir_name        : params._pid,
+            img_name        : params._images,
+            standart_img    : [],
+            small_img       : [],
+            not_found       : []
+        }
+        let status                  = await worker.check_dir(image_pack);
+        image_pack.img_name         = status.found;
+        let images                  = await img_storage.get_images(image_pack);
+        image_pack.standart_img     = images.standart_img;
+        image_pack.small_img        = images.small_img;
+        return image_pack;
     }
-
-
 
 }
 

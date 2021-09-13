@@ -9,6 +9,12 @@ const validators = {
         if (request._pid    === undefined ||
             request._images === undefined)               { return false; }
         else { return true; }
+    },
+
+    validate_get_req    : (request) => {
+        if (request._pid    === undefined ||
+            request._images === undefined)               { return false; }
+        else { return true; }
     }
 }
 
