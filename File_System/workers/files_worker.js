@@ -2,6 +2,7 @@ const img_storage   = require("../storage/fs_storage");
 const base64        = require("../../side_modules/base64");  
 const fs            = require('fs');
 const config        = require('../fs_config');
+const sharp         = require('sharp');
 
 const worker = {
     upload_images   : async(params) => {
@@ -18,20 +19,35 @@ const worker = {
         if(image_count > config.max_count){
             return null;
         }
-        await worker.create_standart(params);
-        await worker.create_temp(params);
-        
+        await worker.create_standart(params);   
         return image;
     },
 
-    create_standart   : async(params) => {
+    create_standart     : async(params) => {
         let res = await img_storage.save_img(params, "photo");
+        fs.writeFile(config.path + `${params._pid}/photo/${params._images[0].name}`, params._images[0].data, function(err){
+            if(!err){
+                console.log("VALID");
+            }else{
+                console.log(params._images[0]);
+                return false;
+            };
+        });
+        await worker.create_temp(params);
         return res;
     },
 
-    create_temp     : async(params) => {
-        let res = await img_storage.save_img(params, "temp");
-        return res;
+    create_temp         : async(params) => {
+        for(let i = 0; i < params._images.length; i++){
+            sharp(config.path + `${params._pid}/photo/${params._images[i].name}`)
+                .resize(100, 100)
+                .toFile(config.path + `${params._pid}/temp/${params._images[i].name}`, function(err){
+                    if(err){
+                        console.log("ERROR KA : " + err + `:::` + config.path + `${params._pid}/photo/${params._images[i].name}`);
+                    }
+                })
+        }
+        return true;
     },
 
     delete_images   : async(params) => {

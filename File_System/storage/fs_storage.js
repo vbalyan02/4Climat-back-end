@@ -31,14 +31,17 @@ const storage = {
             await images.mv(config.path + `${params._pid}/${dir}/${images.name}`);
         }
         for(let i = 0; i < images.length; i++){
-            await images[i].mv(config.path + `${params._pid}/${dir}/${images[i].name}`, function(err){
+            await images[i].mv(config.path + `${params._pid}/${dir}/${images[i].name}`, async function(err){
                 if(err){
                     console.log(err);
                 } else{
+                    console.log("PRCA");
                     return true;
                 }
             });
+
         }
+        return true;
     },
 
     delete_images   : async(params) => {
