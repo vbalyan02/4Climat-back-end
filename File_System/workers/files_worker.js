@@ -25,14 +25,6 @@ const worker = {
 
     create_standart     : async(params) => {
         let res = await img_storage.save_img(params, "photo");
-        fs.writeFile(config.path + `${params._pid}/photo/${params._images[0].name}`, params._images[0].data, function(err){
-            if(!err){
-                console.log("VALID");
-            }else{
-                console.log(params._images[0]);
-                return false;
-            };
-        });
         await worker.create_temp(params);
         return res;
     },

@@ -3,9 +3,6 @@ const router    =   express.Router();
 const valid     =   require("./fs_validators");
 const images    =   require("./workers/files_worker");
 const config    =   require('./fs_config');
-const fs        =   require('fs');
-const util      =   require('util');
-const stream    = require('stream');
 
 
 router.post('/upload', async function(req, res, next){
