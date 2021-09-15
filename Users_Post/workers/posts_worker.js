@@ -13,6 +13,8 @@ const worker = {
         let num = Math.ceil((new Date()).getTime() + (Math.random() * (99 - 9) + 9));
         setElement.pid  = num.toString(16);
         await post_storage.create_post(setElement);
+        setElement.date = await post_storage.get_one_set(setElement);
+        setElement.date = setElement.date._id.getTimestamp();
         return setElement;
     },
 

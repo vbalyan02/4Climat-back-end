@@ -49,6 +49,8 @@ const worker = {
             not_found   : []
         }
         image.dir_name      = params._pid;
+        let found   = await worker.dir_exists(image);
+        if(!found)  { return null; }
         for(let i = 0; i < params._images.length; i++){
             image.img_name.push(params._images[i]);
         }
@@ -67,6 +69,8 @@ const worker = {
             found   : [],
             length  : 0
         };
+        let found   = await worker.dir_exists(params);
+        if(!found)  { return null; }
         let files   = fs.readdirSync(config.path + `${params.dir_name}/photo`);
         let flag;
         arr.length  = files.length;
@@ -97,11 +101,23 @@ const worker = {
             not_found       : []
         }
         let status                  = await worker.check_dir(image_pack);
+        if(!status){
+            return null;
+        }
         image_pack.img_name         = status.found;
         let images                  = await img_storage.get_images(image_pack);
         image_pack.standart_img     = images.standart_img;
         image_pack.small_img        = images.small_img;
         return image_pack;
+    },
+
+    dir_exists : async(params) => {
+        try {
+            await fs.promises.access(config.path + params.dir_name);
+            return true;
+        } catch (err) {
+            return false;
+        }
     }
 
 }
