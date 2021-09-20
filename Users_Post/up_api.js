@@ -5,9 +5,9 @@ const post      =   require("./workers/posts_worker.js");
 
 router.post('/create', async function(req, res, next){
     let params = {
-        _uid     : req.body.uid,
-        _post    : req.body.post,
-        _status  : req.body.status
+        _uid        : req.body.uid,
+        _post       : req.body.post,
+        _status     : req.body.status
     }
     let result = await POST_Create(params);
     if(!result.dataValid){
@@ -18,11 +18,11 @@ router.post('/create', async function(req, res, next){
     next();
 });
 
-router.post('/list', async function (req, res, next){
+router.post('/user_list', async function (req, res, next){
     let params = {
         _uid    : req.body.uid
     }
-    let result = await GET_List(params);
+    let result = await GET_userList(params);
     if(!result.dataValid){
         res.send({error : "Invalid post data"})
     }  else {
@@ -31,13 +31,19 @@ router.post('/list', async function (req, res, next){
     next();
 });
 
-router.post('/updatestatus', async function (req, res, next){
+router.post('/list', async function (req, res, next){
+    let result = await GET_List();
+    res.send(result);
+})
+
+router.post('/update', async function (req, res, next){
     let params = {
         _uid    : req.body.uid,
         _pid    : req.body.pid,
-        _status : req.body.status
+        _post   : req.body.post,
+        _status : req.body.status,
     }
-    let result = await POST_UpdateStatus(params);
+    let result = await POST_Update(params);
     if(!result.dataValid){
         res.send({error : "Invalid post data"})
     }  else {
@@ -86,6 +92,7 @@ const POST_Create           = async (params) => {
         params._post        =   JSON.parse(params._post);
     }
     catch (error) { 
+        console.log(error);
         result.dataValid    =   false;
         result._status      =   "400 : Elements are not JSON";
     }
@@ -95,7 +102,7 @@ const POST_Create           = async (params) => {
     return result; 
 }
 
-const GET_List              = async (params) => {
+const GET_userList              = async (params) => {
     let result = {
         data        : "",
         dataValid   : "",
@@ -109,7 +116,18 @@ const GET_List              = async (params) => {
     return result;
 }
 
-const POST_UpdateStatus     = async (params) => {
+const GET_List          = async (params) => {
+    let result = {
+        data        : "",
+        _status     : ""    
+    };
+    result.data = await post.get_all_sets_list();
+    if(!result.data)        {result._status = "404 : Not found";        return result; }
+    result._status = "200 : Ok";
+    return result;
+}
+
+const POST_Update       = async (params) => {
     let result = {
         dataValid   : "",
         found       : "",
@@ -120,13 +138,15 @@ const POST_UpdateStatus     = async (params) => {
     result.found        = uPost != null;
     if(!result.found)       {result._status = "404 : Not Found";        return result};
     if(!result.dataValid)   { return result; }
-    else {
-        if(uPost.status === params._status){
-            result._status = "208 : Already Reported";
-            return result;
-        }
+    if(!result.dataValid)   {result._status = "400 : Bad Request";      return result};
+    try{
+        params._post        =   JSON.parse(params._post);
     }
-    await post.update_post_status(params);
+    catch (error) { 
+        result.dataValid    =   false;
+        result._status      =   "400 : Elements are not JSON";
+    }
+    await post.update_post(params);
     if(!result.found)        {result._status = "404 : Not found";        return result; }
     result._status = "204 : No content";
     return result;

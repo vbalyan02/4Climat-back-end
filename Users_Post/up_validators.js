@@ -3,7 +3,7 @@ const validators = {
     validate_create_req     : (request) => {
         if (request._uid     === undefined ||
             request._post    === undefined ||
-            request._status  === undefined)                             { return false; }
+            request._status  === undefined)                            { return false; }
         else { return true; }
     },
 
@@ -15,6 +15,7 @@ const validators = {
     validate_update_req     : (request) => {
         if (request._uid    === undefined || 
             request._pid    === undefined ||
+            request._post   === undefined ||
             request._status === undefined)                              { return false; }
         else { return true; }
     },

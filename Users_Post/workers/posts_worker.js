@@ -1,5 +1,6 @@
 const post_storage  = require("../storage/up_storage");
 const base64        = require("../../side_modules/base64");  
+const { param } = require("../up_api");
 
 const worker = {
 
@@ -8,7 +9,7 @@ const worker = {
             uid         :   params._uid,
             pid         :   "", 
             post        :   params._post,
-            status      :   params._status
+            status      :   params._status,
         }
         let num = Math.ceil((new Date()).getTime() + (Math.random() * (99 - 9) + 9));
         setElement.pid  = num.toString(16);
@@ -18,8 +19,9 @@ const worker = {
         return setElement;
     },
 
-    update_post_status  : async(params) => {
+    update_post         : async(params) => {
         let update_dat  = {
+            post    : params._post,
             status  : params._status 
         }
         let query       =   {pid    : params._pid};
@@ -28,10 +30,16 @@ const worker = {
     },
 
     get_sets_list       : async(params) => {
-        let query   = {uid : params._uid, status : "published"};
+        let query   = {uid : params._uid};
         let data    = await post_storage.get_sets_list(query);
         return data;
     }, 
+
+    get_all_sets_list   : async(params) => {
+        let query   = {status : "published"};
+        let data    = await post_storage.get_sets_list(query);
+        return data;
+    },
 
     get_one_post         : async(params) => {
         let query   = {

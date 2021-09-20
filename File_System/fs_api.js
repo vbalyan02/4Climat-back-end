@@ -8,7 +8,7 @@ const config    =   require('./fs_config');
 router.post('/upload', async function(req, res, next){
     let params = {
         _pid    : req.body.pid,
-        _images : req.files.foo
+        _images : req.files.files
     }
     let result = await POST_Upload(params);
     if(!result.dataValid){
