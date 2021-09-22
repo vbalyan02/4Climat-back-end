@@ -27,9 +27,6 @@ const storage = {
 
     save_img        : async(params, dir) => {
         let images = params._images;
-        if(images.length === undefined){
-            await images.mv(config.path + `${params._pid}/${dir}/${images.name}`);
-        }
         for(let i = 0; i < images.length; i++){
             fs.writeFileSync(config.path + `${params._pid}/${dir}/${images[i].name}`, images[i].data, async function(err){
                     if(err){

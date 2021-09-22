@@ -11,6 +11,9 @@ const worker = {
             img_name    : []
         }
         image.dir_name    = params._pid;
+        if(params._images.length === undefined){
+            params._images = [params._images];
+        }
         for(let i = 0; i < params._images.length; i++){
             image.img_name.push(params._images[i].name);
         }
@@ -32,7 +35,11 @@ const worker = {
     create_temp         : async(params) => {
         for(let i = 0; i < params._images.length; i++){
             sharp(config.path + `${params._pid}/photo/${params._images[i].name}`)
-                .resize(100, 100)
+                .resize({
+                    fit: sharp.fit.cover,
+                    width: 200,
+                    height: 200
+                })
                 .toFile(config.path + `${params._pid}/temp/${params._images[i].name}`, function(err){
                     if(err){
                         console.log("ERROR KA : " + err + `:::` + config.path + `${params._pid}/photo/${params._images[i].name}`);
