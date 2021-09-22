@@ -1,6 +1,5 @@
 const post_storage  = require("../storage/up_storage");
 const base64        = require("../../side_modules/base64");  
-const { param } = require("../up_api");
 
 const worker = {
 
@@ -10,12 +9,12 @@ const worker = {
             pid         :   "", 
             post        :   params._post,
             status      :   params._status,
+            date        :   {}
         }
         let num = Math.ceil((new Date()).getTime() + (Math.random() * (99 - 9) + 9));
         setElement.pid  = num.toString(16);
+        setElement.date = (new Date()).toDateString();
         await post_storage.create_post(setElement);
-        setElement.date = await post_storage.get_one_set(setElement);
-        setElement.date = setElement.date._id.getTimestamp();
         return setElement;
     },
 
