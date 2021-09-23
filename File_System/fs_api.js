@@ -36,7 +36,8 @@ router.delete('/delete', async function(req, res, next){
 router.post('/get_images', async function(req, res, next){
     let params = {
         _pid    : req.body.pid,
-        _images : req.body.images
+        _images : req.body.images,
+        _type   : req.body.type
     }
     let result = await POST_getImages(params);
     if(!result.dataValid){

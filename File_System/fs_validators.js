@@ -12,8 +12,10 @@ const validators = {
     },
 
     validate_get_req    : (request) => {
-        if (request._pid    === undefined ||
-            request._images === undefined)               { return false; }
+        if (request._pid    === undefined   ||
+            request._images === undefined   ||
+            (request._type  !== 'standard' &&
+            request._type   !== 'small'))                 { return false; }
         else { return true; }
     }
 }

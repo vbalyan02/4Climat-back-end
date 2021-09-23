@@ -7,8 +7,8 @@ const storage = {
             return await fs.promises.access(config.path + params.dir_name);
         } catch (err) {
             fs.mkdirSync(config.path + params.dir_name);
-            fs.mkdirSync(config.path + `${params.dir_name}/photo`);
-            fs.mkdirSync(config.path + `${params.dir_name}/temp`);
+            fs.mkdirSync(config.path + `${params.dir_name}/standard`);
+            fs.mkdirSync(config.path + `${params.dir_name}/small`);
             return true;
         }
     },
@@ -41,19 +41,17 @@ const storage = {
 
     delete_images   : async(params) => {
         for(let i = 0; i < params.img_name.length; i++){
-            fs.unlinkSync(config.path + `${params.dir_name}/photo/${params.img_name[i]}`);
-            fs.unlinkSync(config.path + `${params.dir_name}/temp/${params.img_name[i]}`);
+            fs.unlinkSync(config.path + `${params.dir_name}/standard/${params.img_name[i]}`);
+            fs.unlinkSync(config.path + `${params.dir_name}/small/${params.img_name[i]}`);
         }
     },
 
     get_images      : async(params) => {
         let res = {
-            standart_img    : [],
-            small_img       : []
+            images  : []
         }
         for(let i = 0; i < params.img_name.length; i++){
-            res.standart_img.push(fs.readFileSync(config.path + `${params.dir_name}/photo/${params.img_name[i]}`).toString('base64'));
-            res.small_img.push(fs.readFileSync(config.path + `${params.dir_name}/temp/${params.img_name[i]}`).toString('base64'));
+            res.images.push(fs.readFileSync(config.path + `${params.dir_name}/${params.img_size}/${params.img_name[i]}`).toString('base64'));
         }
         return res;
     }
