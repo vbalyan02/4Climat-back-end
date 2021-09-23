@@ -113,6 +113,7 @@ const worker = {
         }
         image_pack.img_name         = status.found;
         image_pack.images           = await img_storage.get_images(image_pack);
+	image_pack.images	    = image_pack.images.images;	
         return image_pack;
     },
 
