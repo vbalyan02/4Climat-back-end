@@ -35,7 +35,7 @@ const worker = {
     }, 
 
     get_all_sets_list   : async(params) => {
-        let query   = {status : "published"};
+        let query   = {};
         let data    = await post_storage.get_sets_list(query);
         return data;
     },
